@@ -6,6 +6,9 @@ var Player = function(name, color, position, direction) {
     this.bullets = new Array();
     this.direction = direction;
     this.speed = 0;
+    this.enemyUp = true;
+    this.enemyRight = false;
+    this.lastTouch = new Date();
 
     this.material = new THREE.MeshLambertMaterial({
         color: color,
@@ -21,6 +24,8 @@ var Player = function(name, color, position, direction) {
     THREE.GeometryUtils.merge(canon, sphere);
 
     this.graphic = new THREE.Mesh(sphere, this.material);
+    this.graphic.position.x = position.x;
+    this.graphic.position.y = position.y;
     this.graphic.position.z = 6;
     this.graphic.rotateOnAxis(new THREE.Vector3(0,0,1), this.direction);
 };
@@ -40,7 +45,46 @@ Player.prototype.dead = function () {
         $("#container").html("");
         jQuery('#'+this.name+' >.life').text("Tu es mort !");
         init();
-}
+};
+
+Player.prototype.moveEnemy = function() {
+    var x = this.graphic.position.x + WIDTH / 2;
+    var y = this.graphic.position.y + HEIGHT / 2;
+
+    if (this.enemyRight) {
+        if (x > WIDTH) {
+            this.position.x -= 1;
+            this.enemyRight = false;
+        }
+        else
+            this.position.x += 1;
+    }
+    else if (x < 0) {
+        this.enemyRight = true;
+        this.position.x += 1;
+    }
+    else
+        this.position.x -= 1;
+
+    if (this.enemyUp) {
+        if (y > HEIGHT) {
+            this.position.y -= 1;
+            this.enemyUp = false;
+        }
+        else
+            this.position.y += 1;
+    }
+    else if (y < 0) {
+        this.enemyUp = true;
+        this.position.y += 1;
+    }
+    else
+        this.position.y -= 1;
+
+    this.graphic.position.x += (this.position.x - this.graphic.position.x);
+    this.graphic.position.y += (this.position.y - this.graphic.position.y);
+};
+
 
 Player.prototype.decelerate = function (distance) {
     var min = -1;
@@ -56,7 +100,7 @@ Player.prototype.displayInfo = function () {
 }
 
 Player.prototype.turnRight = function (angle) {
-    this.direction += angle;
+    this.direction -= angle;
     this.graphic.rotateOnAxis(new THREE.Vector3(0,0,1), angle);
 };
 
@@ -80,7 +124,7 @@ Player.prototype.move = function () {
         this.speed = this.speed + 0.04
     }
 
-    light1.position.x = this.graphic.position.x;
+    light1.position.x = 0;
     light1.position.y = this.graphic.position.y;
    // light1.position.z = this.graphic.position.z + 500;
 };

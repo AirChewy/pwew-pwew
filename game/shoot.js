@@ -29,6 +29,7 @@ function shoot()
         player1.bullets[i].position.x += moveDistance * Math.cos(player1.bullets[i].angle);
         player1.bullets[i].position.y += moveDistance * Math.sin(player1.bullets[i].angle);
     }
+    bullet_collision();
 
 }
 
@@ -44,7 +45,12 @@ function bullet_collision()
     //collision between bullet and walls
     for (var i = 0; i < player1.bullets.length; i++)
     {
-        if (Math.abs(player1.bullets[i].position.x) >= WIDTH / 2 ||
+        if (player1.bullets[i].position.x - 10 <= player2.position.x && player1.bullets[i].position.x + 10 >= player2.position.x &&
+            player1.bullets[i].position.y - 10 <= player2.position.y && player1.bullets[i].position.y + 10 >= player2.position.y)
+        {
+            scene.remove(player2.graphic);
+        }
+        else if (Math.abs(player1.bullets[i].position.x) >= WIDTH / 2 ||
             Math.abs(player1.bullets[i].position.y) >= HEIGHT / 2)
         {
             scene.remove(player1.bullets[i]);
@@ -57,12 +63,26 @@ function bullet_collision()
 
 function player_collision()
 {
+
+    if (player1.graphic.position.x <= player2.graphic.position.x + 25 && player1.graphic.position.x >= player2.graphic.position.x - 25 && player1.graphic.position.y <= player2.graphic.position.y + 25 && player1.graphic.position.y >= player2.graphic.position.y - 25) {
+        if (Date.now() - player1.lastTouch > 5000) {
+            player1.life -= 1;
+            if (player1.life == 0)
+                player1.dead();
+            player1.lastTouch = Date.now()
+        }
+    }
+    else
+        player1.touched = false;
+
     //collision between player and walls
     var x = player1.graphic.position.x + WIDTH / 2;
     var y = player1.graphic.position.y + HEIGHT / 2;
 
     if ( x > WIDTH )
         player1.graphic.position.x -= x - WIDTH;
+    if ( x < 0)
+        player1.graphic.position.x -= x;
     if ( y < 0 )
         player1.graphic.position.y -= y;
     if ( y > HEIGHT )
@@ -93,7 +113,15 @@ function player_falling()
             && (y > tileY) 
             && (y < mtileY))
         {
-            player1.dead();
+            player1.life -= 1;
+            if (player1.life == 0)
+                player1.dead()
+
+            player1.position.x = 0;
+            player1.position.y = 0;
+            player1.graphic.position.x = 0;
+            player1.graphic.position.y = 0;
+            player1.speed = 0;
         }
     }
 
