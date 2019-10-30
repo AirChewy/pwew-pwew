@@ -9,6 +9,7 @@ var Player = function(name, color, position, direction) {
     this.enemyUp = true;
     this.enemyRight = false;
     this.lastTouch = new Date();
+    this.kill = 0;
 
     this.material = new THREE.MeshLambertMaterial({
         color: color,
@@ -97,7 +98,9 @@ Player.prototype.decelerate = function (distance) {
 
 Player.prototype.displayInfo = function () {
     jQuery('#'+this.name+' >.life').text(this.life);
-}
+    jQuery(".kill").text(this.kill);
+    console.log(player1.kill)
+};
 
 Player.prototype.turnRight = function (angle) {
     this.direction -= angle;

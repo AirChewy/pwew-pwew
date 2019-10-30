@@ -48,7 +48,11 @@ function bullet_collision()
         if (player1.bullets[i].position.x - 10 <= player2.position.x && player1.bullets[i].position.x + 10 >= player2.position.x &&
             player1.bullets[i].position.y - 10 <= player2.position.y && player1.bullets[i].position.y + 10 >= player2.position.y)
         {
-            scene.remove(player2.graphic);
+            player2.position.x = 50;
+            player2.position.y = 50;
+            player2.graphic.position.x = 50;
+            player2.graphic.position.y = 50;
+            player1.kill += 1;
         }
         else if (Math.abs(player1.bullets[i].position.x) >= WIDTH / 2 ||
             Math.abs(player1.bullets[i].position.y) >= HEIGHT / 2)
